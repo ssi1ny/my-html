@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>콰트 연말/연초 프로모션 전략 (Final)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Markdown Parser for AI responses -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+        
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f5f5f4; color: #44403c; }
+
+        .chart-container {
+            position: relative; width: 100%; height: 200px;
+        }
+        
+        /* Navigation Styles */
+        .nav-btn { transition: all 0.2s; border-left: 4px solid transparent; }
+        .nav-active { background-color: white; font-weight: 700; border-left-color: #f97316; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        
+        /* Animation */
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+        .tag-red { background-color: #fee2e2; color: #991b1b; }
+        .tag-blue { background-color: #dbeafe; color: #1e40af; }
+        .tag-purple { background-color: #f3e8ff; color: #6b21a8; }
+        .tag-gray { background-color: #f3f4f6; color: #4b5563; }
+        .tag-green { background-color: #dcfce7; color: #166534; }
+        .tag-orange { background-color: #ffedd5; color: #9a3412; }
+        .tag-yellow { background-color: #fef9c3; color: #854d0e; }
+
+        /* Timeline Styles */
+        .timeline-item { position: relative; padding-left: 1.5rem; padding-bottom: 1.5rem; border-left: 2px solid #e5e7eb; }
+        .timeline-item:last-child { border-left: none; padding-bottom: 0; }
+        .timeline-dot { position: absolute; left: -0.43rem; top: 0.25rem; width: 0.8rem; height: 0.8rem; border-radius: 50%; background-color: white; border: 2px solid #d1d5db; }
+        .timeline-dot.active { border-color: #f97316; background-color: #f97316; }
+        
+        /* Checklist Item Style */
+        .check-item { display: flex; align-items: start; gap: 0.75rem; padding: 0.5rem; border-radius: 0.5rem; transition: background-color 0.2s; }
+        .check-item:hover { background-color: #f9fafb; }
+        .check-input { margin-top: 0.25rem; width: 1rem; height: 1rem; accent-color: #f97316; cursor: pointer; }
+        .check-label { font-size: 0.875rem; color: #4b5563; cursor: pointer; }
+
+        /* Card Hover Effect */
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* AI Loading Animation */
+        .dot-flashing {
+            position: relative;
+            width: 6px;
+            height: 6px;
+            border-radius: 5px;
+            background-color: #f97316;
+            color: #f97316;
+            animation: dot-flashing 1s infinite linear alternate;
+            animation-delay: 0.5s;
+        }
+        .dot-flashing::before, .dot-flashing::after {
+            content: "";
+            display: inline-block;
+            position: absolute;
+            top: 0;
+        }
+        .dot-flashing::before {
+            left: -10px;
+            width: 6px;
+            height: 6px;
+            border-radius: 5px;
+            background-color: #f97316;
+            color: #f97316;
+            animation: dot-flashing 1s infinite alternate;
+            animation-delay: 0s;
+        }
+        .dot-flashing::after {
+            left: 10px;
+            width: 6px;
+            height: 6px;
+            border-radius: 5px;
+            background-color: #f97316;
+            color: #f97316;
+            animation: dot-flashing 1s infinite alternate;
+            animation-delay: 1s;
+        }
+        @keyframes dot-flashing {
+            0% { background-color: #f97316; }
+            50%, 100% { background-color: #fed7aa; }
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-stone-200 p-4 flex justify-between items-center z-10 shadow-sm">
+        <div class="flex items-center gap-2">
+            <h1 class="text-xl font-bold text-stone-800">🔮 콰트 연말/연초 프로모션 기획</h1>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="text-xs md:text-sm text-stone-500 bg-stone-100 px-3 py-1 rounded-full">
+                기획 마감: 12월 13일
+            </div>
+        </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar -->
+        <nav class="w-64 bg-stone-100 border-r border-stone-200 hidden md:flex flex-col p-4 space-y-2 overflow-y-auto">
+            <div class="text-xs font-bold text-stone-400 mb-2 px-2">전체 목표</div>
+            <button onclick="showSection('overview')" id="nav-overview" class="nav-btn w-full text-left px-4 py-3 rounded text-stone-600 hover:bg-white nav-active">
+                📊 목표 및 방향성
+            </button>
+            
+            <div class="mt-6 text-xs font-bold text-stone-400 mb-2 px-2 pt-4 border-t border-stone-200">기간별 전략</div>
+            <button onclick="showSection('december')" id="nav-december" class="nav-btn w-full text-left px-4 py-3 rounded text-stone-600 hover:bg-white">
+                🔥 12월: 얼리버드
+            </button>
+            <button onclick="showSection('january')" id="nav-january" class="nav-btn w-full text-left px-4 py-3 rounded text-stone-600 hover:bg-white">
+                🌅 1월: 성공반
+            </button>
+
+            <div class="mt-6 text-xs font-bold text-stone-400 mb-2 px-2 pt-4 border-t border-stone-200">관리</div>
+            <button onclick="showSection('todo')" id="nav-todo" class="nav-btn w-full text-left px-4 py-3 rounded text-stone-600 hover:bg-white">
+                ✅ 실행 체크리스트
+            </button>
+
+            <!-- New AI Section -->
+            <div class="mt-6 text-xs font-bold text-stone-400 mb-2 px-2 pt-4 border-t border-stone-200">AI 도구</div>
+            <button onclick="showSection('ai-assistant')" id="nav-ai-assistant" class="nav-btn w-full text-left px-4 py-3 rounded text-purple-700 bg-purple-50 hover:bg-purple-100 border-l-purple-500">
+                ✨ AI 크리에이티브
+            </button>
+        </nav>
+
+        <!-- Mobile Nav -->
+        <nav class="md:hidden fixed bottom-0 w-full bg-white border-t flex justify-around p-2 z-50 text-xs">
+            <button onclick="showSection('overview')" class="p-2">📊 목표</button>
+            <button onclick="showSection('december')" class="p-2 text-red-600 font-bold">🔥 12월</button>
+            <button onclick="showSection('january')" class="p-2 text-blue-600 font-bold">🌅 1월</button>
+            <button onclick="showSection('ai-assistant')" class="p-2 text-purple-600 font-bold">✨ AI</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-8 bg-stone-50 pb-20 md:pb-8">
+            
+            <!-- 1. OVERVIEW -->
+            <section id="overview" class="content-section fade-in">
+                <h2 class="text-2xl font-bold mb-6">목표 (Goal) & 배경</h2>
+                
+                <!-- Goal Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-stone-800">
+                        <div class="text-sm text-stone-500">총 공헌이익 목표</div>
+                        <div class="text-2xl font-bold text-stone-800">3억 원 달성</div>
+                        <p class="text-xs text-stone-400 mt-2">연간 광고비/매출 최대 피크 시즌 대비</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-red-500">
+                        <div class="text-sm text-stone-500">발레 (Target)</div>
+                        <div class="text-xl font-bold">2억 원</div>
+                        <p class="text-xs text-red-500 mt-2 font-bold">CPA 10만원 목표</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
+                        <div class="text-sm text-stone-500">필라테스 (Target)</div>
+                        <div class="text-xl font-bold">1억 원</div>
+                        <p class="text-xs text-blue-500 mt-2 font-bold">CPA 15만원 목표</p>
+                    </div>
+                </div>
+
+                <!-- Strategy Direction -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <h3 class="font-bold text-lg mb-4">📈 프로모션 방향성</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-red-50 p-4 rounded-lg">
+                            <div class="font-bold text-red-800 mb-2">12월 연말 : 할인 + 로또 = 얼리버드 컨셉</div>
+                            <p class="text-sm text-stone-700">
+                                "올해 마지막 혜택, 최저가"<br>
+                                (12월 3~5주차 운영)
+                            </p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <div class="font-bold text-blue-800 mb-2">1월 연초: 혜택+증정 = 초강력 다이어트</div>
+                            <p class="text-sm text-stone-700">
+                                "다이어트 꼭 성공할 수 있도록 다 준비했어"<br>
+                                <strong>신년혜택 성공반 모집</strong> (1월 ~ 추석 전)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. DECEMBER (연말) -->
+            <section id="december" class="content-section hidden fade-in">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="text-3xl">🔥</span>
+                    <div>
+                        <h2 class="text-2xl font-bold text-red-700">12월 연말 캠페인</h2>
+                        <p class="text-sm text-stone-500">컨셉: 할인 + 로또 = 얼리버드 (올해 마지막 혜택)</p>
+                    </div>
+                </div>
+
+                <!-- Benefits (Card Grid Layout) -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 mb-6">
+                    <h3 class="font-bold text-lg mb-4 border-b pb-2">🎁 핵심 혜택</h3>
+                    <!-- Filter Buttons -->
+                    <div class="flex flex-wrap gap-2 text-xs mb-4">
+                        <button onclick="filterBenefits('december', 'all')" class="benefit-dec-btn active px-4 py-2 bg-stone-200 text-stone-700 rounded-full hover:bg-stone-300 transition-colors font-medium" data-filter="all">All</button>
+                        <button onclick="filterBenefits('december', 'discount')" class="benefit-dec-btn px-4 py-2 bg-white border border-orange-200 text-orange-700 rounded-full hover:bg-orange-50 transition-colors" data-filter="discount">할인</button>
+                        <button onclick="filterBenefits('december', 'lotto')" class="benefit-dec-btn px-4 py-2 bg-white border border-yellow-200 text-yellow-700 rounded-full hover:bg-yellow-50 transition-colors" data-filter="lotto">로또</button>
+                        <button onclick="filterBenefits('december', 'refund')" class="benefit-dec-btn px-4 py-2 bg-white border border-emerald-200 text-emerald-700 rounded-full hover:bg-emerald-50 transition-colors" data-filter="refund">환급</button>
+                        <button onclick="filterBenefits('december', 'package')" class="benefit-dec-btn px-4 py-2 bg-white border border-stone-300 text-stone-700 rounded-full hover:bg-stone-100 transition-colors" data-filter="package">패키지</button>
+                    </div>
+                    
+                    <!-- Benefit Cards Grid -->
+                    <div id="benefit-grid-december" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Action Suggestion Card -->
+                <div class="bg-orange-50 border border-orange-200 rounded-xl p-5 shadow-sm mb-6">
+                    <div class="flex items-start gap-3">
+                        <div class="text-2xl">💡</div>
+                        <div class="flex-1">
+                            <h3 class="font-bold text-orange-800 mb-1">추가 액션 제안: 필라테스 사전 예약</h3>
+                            <p class="text-sm text-stone-700 mb-2">
+                                <strong>"최저가일 때 미리 구매하고, 운동 시작은 1월 1일부터!"</strong>
+                            </p>
+                            <div class="text-xs text-stone-600 bg-white p-3 rounded-lg border border-orange-100">
+                                <p class="mb-1"><span class="font-bold text-orange-600">Psychology:</span> 지금 안 사면 손해 + 당장 운동 부담 해소</p>
+                                <p><span class="font-bold text-orange-600">Action:</span> 결제 시작일 지정 기능 구현</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 12월 Ad Creatives Filter (Interactive) -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 mb-6">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                        <h3 class="font-bold text-lg flex items-center gap-2">
+                            <span>📢</span> 12월 광고 소재 아이디어
+                        </h3>
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <button onclick="filterAds('december', 'all')" class="december-filter-btn active px-4 py-2 bg-stone-200 text-stone-700 rounded-full hover:bg-stone-300 transition-colors font-medium" data-filter="all">All</button>
+                            <button onclick="filterAds('december', 'discount')" class="december-filter-btn px-4 py-2 bg-white border border-orange-200 text-orange-700 rounded-full hover:bg-orange-50 transition-colors" data-filter="discount">할인</button>
+                            <button onclick="filterAds('december', 'lotto')" class="december-filter-btn px-4 py-2 bg-white border border-yellow-200 text-yellow-700 rounded-full hover:bg-yellow-50 transition-colors" data-filter="lotto">로또/보상</button>
+                            <button onclick="filterAds('december', 'refund')" class="december-filter-btn px-4 py-2 bg-white border border-emerald-200 text-emerald-700 rounded-full hover:bg-emerald-50 transition-colors" data-filter="refund">환급</button>
+                            <button onclick="filterAds('december', 'timing')" class="december-filter-btn px-4 py-2 bg-white border border-blue-200 text-blue-700 rounded-full hover:bg-blue-50 transition-colors" data-filter="timing">시기</button>
+                        </div>
+                    </div>
+                    <div id="ad-grid-december" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Ads injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Expected Tasks Timeline -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <h3 class="font-bold text-lg mb-4 border-b pb-2">🗓️ 12월 예상 일감 타임라인</h3>
+                    <div class="mt-2">
+                        <div class="timeline-item">
+                            <div class="timeline-dot active"></div>
+                            <h4 class="text-sm font-bold text-stone-800">기획 (Planning)</h4>
+                            <p class="text-xs text-stone-500 mb-2">~ 12월 2주차</p>
+                            <ul class="text-xs text-stone-600 list-disc list-inside bg-stone-50 p-2 rounded">
+                                <li>연말/연초 랜딩 페이지 기획</li>
+                                <li><strong>사전 예약 프로모션 구조 설계</strong></li>
+                            </ul>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot active"></div>
+                            <h4 class="text-sm font-bold text-stone-800">제작 (Production)</h4>
+                            <p class="text-xs text-stone-500 mb-2">~ 12월 3주차</p>
+                            <ul class="text-xs text-stone-600 list-disc list-inside bg-stone-50 p-2 rounded space-y-1">
+                                <li><strong>연말 랜딩 디자인/개발</strong></li>
+                                <li>광고 소재 제작 (최저가, 로또, 환급)</li>
+                            </ul>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <h4 class="text-sm font-bold text-stone-800">운영 (Operation)</h4>
+                            <p class="text-xs text-stone-500 mb-2">12월 3주 ~ 5주차</p>
+                            <ul class="text-xs text-stone-600 list-disc list-inside bg-stone-50 p-2 rounded">
+                                <li>얼리버드 캠페인 라이브</li>
+                                <li>가격 인상 카운트다운 노출</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. JANUARY (연초) -->
+            <section id="january" class="content-section hidden fade-in">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="text-3xl">🌅</span>
+                    <div>
+                        <h2 class="text-2xl font-bold text-blue-700">1월 신년 캠페인</h2>
+                        <p class="text-sm text-stone-500">컨셉: 혜택 + 증정 = 성공반 (신년혜택 성공반 모집)</p>
+                    </div>
+                </div>
+
+                <!-- Benefits (Card Grid Layout) -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 mb-6">
+                    <h3 class="font-bold text-lg mb-4 border-b pb-2">💎 혜택 (Benefits)</h3>
+                    <!-- Filter Buttons -->
+                    <div class="flex flex-wrap gap-2 text-xs mb-4">
+                        <button onclick="filterBenefits('january', 'all')" class="benefit-jan-btn active px-4 py-2 bg-stone-200 text-stone-700 rounded-full hover:bg-stone-300 transition-colors font-medium" data-filter="all">All</button>
+                        <button onclick="filterBenefits('january', 'basic')" class="benefit-jan-btn px-4 py-2 bg-white border border-blue-200 text-blue-700 rounded-full hover:bg-blue-50 transition-colors" data-filter="basic">기본 혜택</button>
+                        <button onclick="filterBenefits('january', 'premium')" class="benefit-jan-btn px-4 py-2 bg-white border border-purple-200 text-purple-700 rounded-full hover:bg-purple-50 transition-colors" data-filter="premium">프리미엄</button>
+                    </div>
+                    
+                    <!-- Benefit Cards Grid -->
+                    <div id="benefit-grid-january" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+
+                <!-- 1월 Ad Creatives Filter (Interactive) -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                        <h3 class="font-bold text-lg flex items-center gap-2">
+                            <span>📢</span> 1월 광고 소재 아이디어
+                        </h3>
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <button onclick="filterAds('january', 'all')" class="january-filter-btn active px-4 py-2 bg-stone-200 text-stone-700 rounded-full hover:bg-stone-300 transition-colors font-medium" data-filter="all">All</button>
+                            <button onclick="filterAds('january', 'newyear')" class="january-filter-btn px-4 py-2 bg-white border border-blue-200 text-blue-700 rounded-full hover:bg-blue-50 transition-colors" data-filter="newyear">신년/다짐</button>
+                            <button onclick="filterAds('january', 'premium')" class="january-filter-btn px-4 py-2 bg-white border border-purple-200 text-purple-700 rounded-full hover:bg-purple-50 transition-colors" data-filter="premium">프리미엄</button>
+                            <button onclick="filterAds('january', 'collab')" class="january-filter-btn px-4 py-2 bg-white border border-green-200 text-green-700 rounded-full hover:bg-green-50 transition-colors" data-filter="collab">제휴</button>
+                        </div>
+                    </div>
+                    <div id="ad-grid-january" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Ads injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Expected Tasks Timeline -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 mt-6">
+                    <h3 class="font-bold text-lg mb-4 border-b pb-2">🗓️ 1월 예상 일감 타임라인</h3>
+                    <div class="mt-2">
+                        <div class="timeline-item">
+                            <div class="timeline-dot active"></div>
+                            <h4 class="text-sm font-bold text-stone-800">준비 (Preparation)</h4>
+                            <p class="text-xs text-stone-500 mb-2">~ 12월 말</p>
+                            <ul class="text-xs text-stone-600 list-disc list-inside bg-stone-50 p-2 rounded">
+                                <li><strong>저속노화 비법서: 크몽 외주 서칭 및 제작</strong></li>
+                                <li>제휴 브랜드(말해보카, 리얼클래스) 제안</li>
+                            </ul>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <h4 class="text-sm font-bold text-stone-800">제작 (Production)</h4>
+                            <p class="text-xs text-stone-500 mb-2">12월 말 ~ 1월 초</p>
+                            <ul class="text-xs text-stone-600 list-disc list-inside bg-stone-50 p-2 rounded">
+                                <li>신년 썸네일 교체 (랜딩 분위기 쇄신)</li>
+                                <li>프리미엄 패키지 상세 페이지</li>
+                            </ul>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <h4 class="text-sm font-bold text-stone-800">운영 (Operation)</h4>
+                            <p class="text-xs text-stone-500 mb-2">1월 ~ 추석 전</p>
+                            <ul class="text-xs text-stone-600 list-disc list-inside bg-stone-50 p-2 rounded">
+                                <li>신년 성공반 캠페인 라이브</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-blue-50 rounded border border-blue-100 text-xs text-blue-700">
+                        💡 <strong>기타 아이디어:</strong> 신년 갓생 패키지 (제휴) - 말해보카, 리얼클래스
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. TODO & CHECKLIST -->
+            <section id="todo" class="content-section hidden fade-in">
+                <h2 class="text-2xl font-bold mb-6">실행 계획 (Action Plan)</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-red-500">
+                        <h3 class="font-bold text-lg mb-4 text-red-600">🚨 필수 리스크 체크</h3>
+                        <div class="space-y-2">
+                            <div class="check-item">
+                                <input type="checkbox" id="risk1" class="check-input">
+                                <label for="risk1" class="check-label"><strong>[법무]</strong> '로또' 용어 및 500만원 지급 광고 가능 여부 확인</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="risk2" class="check-input">
+                                <label for="risk2" class="check-label"><strong>[콘텐츠]</strong> 비법서: 피카팀 불가 → 크몽 외주/자체 제작 결정</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-stone-500">
+                        <h3 class="font-bold text-lg mb-4 text-stone-800">🗓️ 전체 실행 체크리스트</h3>
+                        <div class="space-y-2">
+                            <div class="check-item">
+                                <input type="checkbox" id="task1" class="check-input">
+                                <label for="task1" class="check-label"><strong>[12/3~]</strong> 12월 연말 캠페인 시작 (할인+로또)</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="task2" class="check-input">
+                                <label for="task2" class="check-label"><strong>[개발]</strong> 사전 예약 (1월 시작) 결제 로직 구현</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="task3" class="check-input">
+                                <label for="task3" class="check-label"><strong>[12월 중]</strong> 신년 콘텐츠(비법서) 크몽 외주/제작 완료</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="task4" class="check-input">
+                                <label for="task4" class="check-label"><strong>[1월 초]</strong> 1월 신년 캠페인 전환 (프리미엄+성공반)</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="task5" class="check-input">
+                                <label for="task5" class="check-label"><strong>[상시]</strong> 광고 소재(최저가/환급/500만원) 효율 최적화</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. ✨ AI ASSISTANT (New Feature) -->
+            <section id="ai-assistant" class="content-section hidden fade-in">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="text-3xl">✨</span>
+                    <div>
+                        <h2 class="text-2xl font-bold text-purple-700">AI 크리에이티브 어시스턴트</h2>
+                        <p class="text-sm text-stone-500">Gemini API를 활용해 아이디어와 리스크를 실시간으로 점검하세요.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Feature 1: AI Ad Copywriter -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                        <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                            <span>✍️</span> AI 카피라이터
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">타겟 (Target)</label>
+                                <input type="text" id="ad-target" class="w-full p-2 border rounded text-sm" value="2030 여성 다이어터" placeholder="예: 새해 운동 결심한 직장인">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">핵심 혜택 (Key Benefit)</label>
+                                <select id="ad-benefit" class="w-full p-2 border rounded text-sm">
+                                    <option value="52% 할인 & 최저가">12월: 52% 할인 & 최저가</option>
+                                    <option value="로또 500만원 증정">12월: 로또 500만원 증정</option>
+                                    <option value="100% 무조건 환급">100% 무조건 환급</option>
+                                    <option value="저속노화 비법서 증정">1월: 저속노화 비법서 증정</option>
+                                </select>
+                            </div>
+                            <button onclick="generateAdCopy()" class="w-full py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors flex justify-center items-center gap-2">
+                                <span>아이디어 생성하기</span>
+                            </button>
+                            
+                            <!-- Output Area -->
+                            <div id="ad-output" class="bg-purple-50 p-4 rounded-lg min-h-[100px] text-sm text-stone-700">
+                                <span class="text-stone-400">여기에 AI가 제안한 카피가 표시됩니다.</span>
+                            </div>
+                            <!-- Save Button -->
+                            <button onclick="saveIdea('ad')" id="save-ad-btn" class="w-full py-2 bg-gray-200 text-gray-600 rounded hover:bg-gray-300 transition-colors hidden text-xs">
+                                💾 이 아이디어 저장하기
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2: AI Risk Checker -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                        <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                            <span>⚖️</span> AI 리스크 법무팀 (Beta)
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="bg-orange-50 p-3 rounded text-xs text-orange-800 mb-2">
+                                ⚠️ 실제 법률 자문이 아니며, 참고용으로만 활용하세요.
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">검토할 문구/기획안</label>
+                                <textarea id="risk-text" class="w-full p-2 border rounded text-sm h-24" placeholder="예: 다이어트 로또 이벤트, 1등에게 500만원 현금 지급! 꽝이어도 100% 환급해 드립니다."></textarea>
+                            </div>
+                            <button onclick="checkRisk()" class="w-full py-2 bg-stone-800 text-white rounded hover:bg-stone-700 transition-colors">
+                                <span>리스크 분석하기</span>
+                            </button>
+
+                            <!-- Output Area -->
+                            <div id="risk-output" class="bg-stone-50 p-4 rounded-lg min-h-[100px] text-sm text-stone-700">
+                                <span class="text-stone-400">AI가 잠재적 문제점을 분석해 드립니다.</span>
+                            </div>
+                            <!-- Save Button -->
+                            <button onclick="saveIdea('risk')" id="save-risk-btn" class="w-full py-2 bg-gray-200 text-gray-600 rounded hover:bg-gray-300 transition-colors hidden text-xs">
+                                💾 이 분석 저장하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Saved Ideas Section -->
+                <div class="mt-8 bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                        <span>💾</span> 저장된 아이디어 (Saved Ideas)
+                    </h3>
+                    <div id="saved-list" class="space-y-3 text-sm text-stone-600">
+                        <p class="text-stone-400">아직 저장된 아이디어가 없습니다.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // API Configuration
+        const apiKey = ""; // System will provide this key
+
+        // State Management
+        const state = {
+            currentSection: 'dashboard',
+            decemberAds: [
+                { type: 'discount', title: '할인 소구', text: "2024년 마지막 최저가! (52% OFF)", icon: "📉", color: "bg-orange-100 text-orange-700" },
+                { type: 'lotto', title: '로또/보상', text: "다이어트 500만원의 주인공은?", icon: "🎰", color: "bg-yellow-100 text-yellow-700" },
+                { type: 'refund', title: '환급 소구', text: "못 빼도 그냥 환급해 드립니다. 운동만 하세요.", icon: "💸", color: "bg-emerald-100 text-emerald-700" },
+                { type: 'refund', title: '환급 소구', text: "살 안 빠져도 100% 환급, 빠져도 100% 환급", icon: "🛡️", color: "bg-emerald-100 text-emerald-700" },
+                { type: 'timing', title: '시기 소구', text: "최저가일 때 구매하고 운동은 1월부터!", icon: "⏱️", color: "bg-blue-100 text-blue-700" },
+            ],
+            januaryAds: [
+                { type: 'newyear', title: '신년 다짐', text: "다이어트 꼭 성공할 수 있도록 다 준비했어", icon: "🎯", color: "bg-blue-100 text-blue-700" },
+                { type: 'newyear', title: '신년 다짐', text: "신년혜택 성공반 모집", icon: "🙌", color: "bg-blue-100 text-blue-700" },
+                { type: 'premium', title: '프리미엄', text: "저속노화 비법서 증정 (새해 한 살 더 먹기 싫다면?)", icon: "📚", color: "bg-purple-100 text-purple-700" },
+                { type: 'collab', title: '제휴', text: "신년 갓생 패키지 (말해보카/리얼클래스 제휴)", icon: "🤝", color: "bg-green-100 text-green-700" },
+            ],
+            decemberBenefits: [
+                { type: 'discount', title: '52% 할인', desc: '추석 프로모션 성공 공식 계승', detail: '역대 최저가 보장', icon: '🏷️', color: 'border-orange-200 bg-orange-50' },
+                { type: 'lotto', title: '다이어트 로또', desc: '살 빼고 500만원 받자!', detail: '대박 심리 자극', icon: '🎰', color: 'border-yellow-200 bg-yellow-50' },
+                { type: 'refund', title: '100% 환급', desc: '성공해도 실패해도 환급', detail: 'Risk Zero 전략', icon: '💸', color: 'border-emerald-200 bg-emerald-50' },
+                { type: 'package', title: '풀 패키지', desc: '기구 2종 + 매트 증정', detail: '등록 즉시 무료 배송', icon: '🎁', color: 'border-stone-200 bg-stone-50' },
+            ],
+            januaryBenefits: [
+                { type: 'basic', title: '기본: 로또 500만', desc: '새해 다이어트 지원금', detail: '동기 부여 극대화', icon: '🎰', color: 'border-blue-200 bg-blue-50' },
+                { type: 'basic', title: '기본: 100% 환급', desc: '성공/실패 무관 전액 환급', detail: '부담 없는 시작', icon: '💸', color: 'border-blue-200 bg-blue-50' },
+                { type: 'basic', title: '기본: 기구 풀세트', desc: '필라테스 기구 + 매트', detail: '홈트 필수템 증정', icon: '🧘‍♀️', color: 'border-blue-200 bg-blue-50' },
+                { type: 'premium', title: '프리미엄: 패키지', desc: '필라테스 + 발레바 추가', detail: '30~35만원대 고관여 타겟', icon: '📦', color: 'border-purple-200 bg-purple-50' },
+                { type: 'premium', title: '프리미엄: 비법서', desc: '저속노화 시크릿 가이드', detail: '크몽 서칭/제작 예정', icon: '📚', color: 'border-purple-200 bg-purple-50' },
+            ]
+        };
+
+        // Navigation Logic
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(sectionId).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('nav-active');
+                // Reset AI button style if needed
+                if(btn.id === 'nav-ai-assistant') {
+                    btn.classList.remove('ring-2', 'ring-purple-300');
+                }
+            });
+            
+            const activeBtn = document.getElementById(`nav-${sectionId}`);
+            activeBtn.classList.add('nav-active');
+            if(sectionId === 'ai-assistant') {
+                activeBtn.classList.add('ring-2', 'ring-purple-300');
+                loadSavedIdeas(); // Load saved ideas when entering the tab
+            }
+        }
+
+        // Ad Filtering Logic
+        function renderAds(campaign, filterType) {
+            const containerId = campaign === 'december' ? 'ad-grid-december' : 'ad-grid-january';
+            const container = document.getElementById(containerId);
+            if(!container) return;
+            
+            container.innerHTML = '';
+            
+            const adsData = campaign === 'december' ? state.decemberAds : state.januaryAds;
+            const filtered = filterType === 'all' 
+                ? adsData 
+                : adsData.filter(ad => ad.type === filterType);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="col-span-2 text-center text-stone-400 py-4">해당 카테고리의 소재가 없습니다.</div>`;
+                return;
+            }
+
+            filtered.forEach(ad => {
+                const div = document.createElement('div');
+                div.className = "p-4 border border-stone-200 rounded-lg bg-stone-50 hover:bg-white hover:border-orange-200 transition-all cursor-default shadow-sm";
+                
+                div.innerHTML = `
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs px-2 py-1 rounded font-bold ${ad.color}">${ad.title}</span>
+                        <span class="text-lg">${ad.icon}</span>
+                    </div>
+                    <p class="text-sm font-medium text-stone-800 leading-snug">"${ad.text}"</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function filterAds(campaign, type) {
+            const btnClass = campaign === 'december' ? '.december-filter-btn' : '.january-filter-btn';
+            
+            document.querySelectorAll(btnClass).forEach(btn => {
+                if(btn.dataset.filter === type) {
+                    btn.classList.add('bg-stone-200', 'font-bold');
+                    btn.classList.remove('bg-white');
+                } else {
+                    btn.classList.remove('bg-stone-200', 'font-bold');
+                    btn.classList.add('bg-white');
+                }
+            });
+            renderAds(campaign, type);
+        }
+
+        // Benefit Filtering Logic
+        function renderBenefits(campaign, filterType) {
+            const containerId = campaign === 'december' ? 'benefit-grid-december' : 'benefit-grid-january';
+            const container = document.getElementById(containerId);
+            if(!container) return;
+
+            container.innerHTML = '';
+
+            const benefitsData = campaign === 'december' ? state.decemberBenefits : state.januaryBenefits;
+            const filtered = filterType === 'all' 
+                ? benefitsData 
+                : benefitsData.filter(b => b.type === filterType);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="col-span-2 text-center text-stone-400 py-4">해당 카테고리의 혜택이 없습니다.</div>`;
+                return;
+            }
+
+            filtered.forEach(b => {
+                const div = document.createElement('div');
+                div.className = `p-5 border rounded-xl card-hover flex items-start gap-4 ${b.color} bg-opacity-20`;
+                
+                div.innerHTML = `
+                    <div class="text-3xl">${b.icon}</div>
+                    <div>
+                        <h4 class="font-bold text-stone-800 text-lg">${b.title}</h4>
+                        <p class="text-sm text-stone-600 font-medium mt-1">${b.desc}</p>
+                        <p class="text-xs text-stone-500 mt-2 bg-white bg-opacity-60 inline-block px-2 py-1 rounded">${b.detail}</p>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function filterBenefits(campaign, type) {
+            const btnClass = campaign === 'december' ? '.benefit-dec-btn' : '.benefit-jan-btn';
+            
+            document.querySelectorAll(btnClass).forEach(btn => {
+                if(btn.dataset.filter === type) {
+                    btn.classList.add('bg-stone-200', 'font-bold');
+                    btn.classList.remove('bg-white');
+                } else {
+                    btn.classList.remove('bg-stone-200', 'font-bold');
+                    btn.classList.add('bg-white');
+                }
+            });
+            renderBenefits(campaign, type);
+        }
+
+        // Gemini API Helper Function
+        async function callGeminiAPI(prompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const maxRetries = 5;
+            let retryCount = 0;
+            let delay = 1000;
+
+            while (retryCount <= maxRetries) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{ text: prompt }]
+                            }]
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    return data.candidates[0].content.parts[0].text;
+                } catch (error) {
+                    if (retryCount === maxRetries) {
+                        console.error("Error calling Gemini API after retries:", error);
+                        return "죄송합니다. AI 응답을 불러오는 중 오류가 발생했습니다. (잠시 후 다시 시도해주세요)";
+                    }
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                    retryCount++;
+                }
+            }
+        }
+
+        // Feature 1: Generate Ad Copy
+        async function generateAdCopy() {
+            const target = document.getElementById('ad-target').value;
+            const benefit = document.getElementById('ad-benefit').value;
+            const outputDiv = document.getElementById('ad-output');
+            const saveBtn = document.getElementById('save-ad-btn');
+
+            outputDiv.innerHTML = '<div class="flex justify-center py-4"><div class="dot-flashing"></div></div>';
+            saveBtn.classList.add('hidden');
+
+            const prompt = `
+                역할: 전문 마케팅 카피라이터.
+                상황: 필라테스/운동 앱 프로모션 광고 문구를 작성해야 함.
+                타겟: ${target}
+                핵심 혜택: ${benefit}
+                
+                요청: 위 타겟과 혜택을 바탕으로 클릭률(CTR)을 높일 수 있는 매력적인 광고 카피 3가지를 작성해줘.
+                형식:
+                1. [헤드라인]
+                   - 설명
+                2. [헤드라인]
+                   - 설명
+                3. [헤드라인]
+                   - 설명
+                
+                어조: 위트있고, 후킹하며, 설득력 있게. 이모지 적절히 사용.
+            `;
+
+            const result = await callGeminiAPI(prompt);
+            outputDiv.innerHTML = marked.parse(result);
+            saveBtn.classList.remove('hidden');
+        }
+
+        // Feature 2: Risk Check
+        async function checkRisk() {
+            const text = document.getElementById('risk-text').value;
+            const outputDiv = document.getElementById('risk-output');
+            const saveBtn = document.getElementById('save-risk-btn');
+
+            if (!text.trim()) {
+                outputDiv.innerHTML = '<span class="text-red-500">검토할 내용을 입력해주세요.</span>';
+                return;
+            }
+
+            outputDiv.innerHTML = '<div class="flex justify-center py-4"><div class="dot-flashing"></div></div>';
+            saveBtn.classList.add('hidden');
+
+            const prompt = `
+                역할: 마케팅 법무 리스크 검토 전문가.
+                상황: 한국의 운동 앱 프로모션 기획안을 검토 중.
+                검토 내용: "${text}"
+                
+                요청: 위 내용에서 발생할 수 있는 법적 문제(사행성 조장, 과장 광고, 표시광고법 위반 등)나 소비자 오해 소지가 있는 부분을 3가지 포인트로 지적하고, 안전하게 수정할 수 있는 대안을 제시해줘.
+                
+                주의: "법적인 조언이 아님"을 명시할 것.
+                어조: 냉철하고 분석적으로.
+            `;
+
+            const result = await callGeminiAPI(prompt);
+            outputDiv.innerHTML = marked.parse(result);
+            saveBtn.classList.remove('hidden');
+        }
+
+        // Local Storage Functions
+        function saveIdea(type) {
+            const outputDiv = type === 'ad' ? document.getElementById('ad-output') : document.getElementById('risk-output');
+            const content = outputDiv.innerHTML;
+            const date = new Date().toLocaleString();
+            const title = type === 'ad' ? `📝 카피 아이디어 (${date})` : `⚖️ 리스크 분석 (${date})`;
+
+            const idea = { title, content, id: Date.now() };
+            
+            let savedIdeas = JSON.parse(localStorage.getItem('kwama_ideas')) || [];
+            savedIdeas.unshift(idea); 
+            localStorage.setItem('kwama_ideas', JSON.stringify(savedIdeas));
+            
+            loadSavedIdeas();
+            alert('저장되었습니다!');
+        }
+
+        function loadSavedIdeas() {
+            const listContainer = document.getElementById('saved-list');
+            const savedIdeas = JSON.parse(localStorage.getItem('kwama_ideas')) || [];
+
+            if (savedIdeas.length === 0) {
+                listContainer.innerHTML = '<p class="text-stone-400">아직 저장된 아이디어가 없습니다.</p>';
+                return;
+            }
+
+            listContainer.innerHTML = '';
+            savedIdeas.forEach(idea => {
+                const div = document.createElement('div');
+                div.className = "bg-stone-50 p-3 rounded border border-stone-200 relative group";
+                div.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <strong class="text-stone-700 text-xs">${idea.title}</strong>
+                        <button onclick="deleteIdea(${idea.id})" class="text-red-400 hover:text-red-600 text-xs">삭제</button>
+                    </div>
+                    <div class="text-xs text-stone-600 overflow-hidden max-h-24 group-hover:max-h-full transition-all duration-300">
+                        ${idea.content}
+                    </div>
+                `;
+                listContainer.appendChild(div);
+            });
+        }
+
+        function deleteIdea(id) {
+            if(!confirm('정말 삭제하시겠습니까?')) return;
+            
+            let savedIdeas = JSON.parse(localStorage.getItem('kwama_ideas')) || [];
+            savedIdeas = savedIdeas.filter(idea => idea.id !== id);
+            localStorage.setItem('kwama_ideas', JSON.stringify(savedIdeas));
+            loadSavedIdeas();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial Render
+            renderAds('december', 'all');
+            renderAds('january', 'all');
+            renderBenefits('december', 'all');
+            renderBenefits('january', 'all');
+        });
+    </script>
+</body>
+</html>
